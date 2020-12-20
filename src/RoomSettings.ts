@@ -24,13 +24,13 @@ const RoomSettings: RoomSettingsType = {
 		idealPopulation: { harvester: 3, builder: 0, upgrader: 2 },
 		roles: {
 			harvester: {
-				body: [WORK, CARRY, MOVE, MOVE],
+				body: [WORK, WORK, CARRY, MOVE, MOVE],
 			},
 			builder: {
 				body: [WORK, CARRY, MOVE, MOVE],
 			},
 			upgrader: {
-				body: [WORK, CARRY, MOVE, MOVE],
+				body: [WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
 			},
 		},
 		rolePriority: ['harvester', 'builder', 'upgrader'],

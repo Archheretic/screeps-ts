@@ -6,10 +6,6 @@ interface CreepMemory {
 	roomOrigin: string;
 	spawnOrigin: string;
 	working?: boolean;
-	// can these be replaced by working?
-	deposit?: boolean;
-	building?: boolean;
-	upgrading?: boolean;
 	sourceIndex?: number;
 }
 

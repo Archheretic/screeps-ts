@@ -1,16 +1,16 @@
 const Harvester = {
 	work(creep: Creep): void {
 		const storageExcessResources = false;
-		if (creep.memory.deposit && creep.store.getUsedCapacity() === 0) {
-			creep.memory.deposit = false;
+		if (creep.memory.working && creep.store.getUsedCapacity() === 0) {
+			creep.memory.working = false;
 			creep.say('harvesting');
 		}
-		if (!creep.memory.deposit && creep.store.getFreeCapacity() === 0) {
-			creep.memory.deposit = true;
-			creep.say('depositing');
+		if (!creep.memory.working && creep.store.getFreeCapacity() === 0) {
+			creep.memory.working = true;
+			creep.say('workinging');
 		}
 
-		if (!creep.memory.deposit) {
+		if (!creep.memory.working) {
 			// FIND_SOURCES is sources of resources?
 			// const sources = creep.room.find(FIND_SOURCES);
 			// const activeSource = sources[creep.memory.sourceIndex || 0];
@@ -21,7 +21,7 @@ const Harvester = {
 					activeSource.ticksToRegeneration > 5 &&
 					!creep.store.getFreeCapacity()
 				)
-					creep.memory.deposit = true;
+					creep.memory.working = true;
 				if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) {
 					creep.moveTo(activeSource, {
 						visualizePathStyle: { stroke: '#ffaa00' },
