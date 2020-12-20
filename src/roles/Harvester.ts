@@ -3,13 +3,13 @@ import { harvestEnergy } from './utils';
 const Harvester = {
 	work(creep: Creep): void {
 		const storageExcessResources = false;
-		if (creep.memory.working && creep.store.getUsedCapacity() === 0) {
+		if (creep.memory.working && creep.store.getFreeCapacity() === 0) {
 			creep.memory.working = false;
-			creep.say('harvesting');
+			creep.say('deposit');
 		}
-		if (!creep.memory.working && creep.store.getFreeCapacity() !== 0) {
+		if (!creep.memory.working && creep.store.getUsedCapacity() === 0) {
 			creep.memory.working = true;
-			creep.say('working');
+			creep.say('🔄 harvest');
 		}
 
 		if (creep.memory.working) {
@@ -47,7 +47,9 @@ const Harvester = {
 					creep.room.controller &&
 					creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE
 				) {
-					creep.moveTo(creep.room.controller);
+					creep.moveTo(creep.room.controller, {
+						visualizePathStyle: { stroke: '#ffffff' },
+					});
 				}
 			}
 		}
