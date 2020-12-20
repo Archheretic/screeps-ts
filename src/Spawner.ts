@@ -23,7 +23,6 @@ const Spawner = {
 							memory: {
 								role,
 								roomOrigin: roomName,
-								currentRoom: roomName,
 								spawnOrigin: sp,
 							},
 						});
