@@ -10,12 +10,15 @@ const Creeps = {
 			switch(creep.memory.role) {
 				case 'harvester': {
 					Harvester.work(creep);
+					break;
 				}
 				case 'builder': {
 					Builder.work(creep);
+					break;
 				}
 				case 'upgrader': {
 					Upgrader.work(creep);
+					break;
 				}
 			}
 		});
