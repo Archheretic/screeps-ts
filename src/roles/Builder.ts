@@ -1,4 +1,4 @@
-import { findEnergySource } from './utils';
+import { harvestEnergy } from './utils';
 
 const Builder = {
 	work(creep: Creep): void {
@@ -13,7 +13,7 @@ const Builder = {
 
 		if (creep.memory.working) {
 			const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-			console.log('targets:', JSON.stringify(targets, null, 2));
+			// console.log('targets:', JSON.stringify(targets, null, 2));
 			if (targets.length) {
 				if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
 					creep.moveTo(targets[0], {
@@ -23,14 +23,7 @@ const Builder = {
 			}
 			// else return resources.
 		} else {
-			const activeSource = findEnergySource(creep);
-			if (activeSource) {
-				if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) {
-					creep.moveTo(activeSource, {
-						visualizePathStyle: { stroke: '#ffaa00' },
-					});
-				}
-			}
+			harvestEnergy(creep);
 		}
 	},
 };

@@ -1,4 +1,4 @@
-import { findEnergySource } from './utils';
+import { harvestEnergy } from './utils';
 
 const Upgrader = {
 	work(creep: Creep): void {
@@ -21,14 +21,7 @@ const Upgrader = {
 				});
 			}
 		} else {
-			const activeSource = findEnergySource(creep);
-			if (activeSource) {
-				if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) {
-					creep.moveTo(activeSource, {
-						visualizePathStyle: { stroke: '#ffaa00' },
-					});
-				}
-			}
+			harvestEnergy(creep);
 		}
 	},
 };

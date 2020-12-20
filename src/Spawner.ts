@@ -10,7 +10,6 @@ const Spawner = {
 			const roomSettings = RoomSettings[roomName];
 			const spawnsInRoom = roomSpawnsMap[roomName];
 			const popInRoom = population[roomName];
-			console.log('popInRoom:', JSON.stringify(popInRoom, null, 2));
 			Object.keys(spawnsInRoom).forEach(sp => {
 				// find first unused name, if no name is available give random number as name
 				const name = !Memory.creeps
@@ -21,7 +20,12 @@ const Spawner = {
 					if (popInRoom[role] < roomSettings.idealPopulation[role]) {
 						const roleSettings = roomSettings.roles[role];
 						Game.spawns[sp].spawnCreep(roleSettings.body, name, {
-							memory: { role, roomOrigin: roomName, spawnOrigin: sp },
+							memory: {
+								role,
+								roomOrigin: roomName,
+								currentRoom: roomName,
+								spawnOrigin: sp,
+							},
 						});
 					}
 				});
