@@ -5,10 +5,13 @@ export function findEnergySource(creep: Creep): Source | null {
 	}
 
 	const sources = creep.room.find(FIND_SOURCES);
+	console.log(JSON.stringify(sources, null, 2));
+	console.log(' creep.room.name:', creep.room.name);
 	const source = sources.find(
 		s => getOpenPositions(s.pos.x, s.pos.y, creep.room.name).length > 0
 	);
 
+	console.log('findEnergySource source:', source);
 	if (source) {
 		creep.memory.sourceId = source.id;
 	}
@@ -26,8 +29,8 @@ export function getNearbyPositions(
 	const startX = x - 1 || 1;
 	const startY = y - 1 || 1;
 
-	for (let xCoord = startX; xCoord < x && xCoord < 49; xCoord++) {
-		for (let yCoord = startY; yCoord < y && yCoord < 49; yCoord++) {
+	for (let xCoord = startX; xCoord <= x + 1 && xCoord < 49; xCoord++) {
+		for (let yCoord = startY; yCoord <= y + 1 && yCoord < 49; yCoord++) {
 			if (xCoord !== x || yCoord !== y) {
 				positions.push(new RoomPosition(xCoord, yCoord, roomName));
 			}
@@ -44,14 +47,13 @@ export function getOpenPositions(
 	const nearbyPositions = getNearbyPositions(x, y, roomName);
 	const terrain = Game.map.getRoomTerrain(roomName);
 
-	const walkablePositions = nearbyPositions.filter(
-		pos => terrain.get(pos.x, pos.y) !== TERRAIN_MASK_WALL
-	);
+	const walkablePositions = nearbyPositions.filter(pos => {
+		return terrain.get(pos.x, pos.y) !== TERRAIN_MASK_WALL;
+	});
 
 	const freePositions = walkablePositions.filter(
 		pos => !pos.lookFor(LOOK_CREEPS).length
 	);
-
 	return freePositions;
 }
 
@@ -63,7 +65,7 @@ export function isStoredEnergySourceViable(creep: Creep): boolean {
 	if (
 		storedSource &&
 		// storedSource needs to have energy or get energy in 5 ticks
-		(storedSource.energy !== 0 || storedSource.ticksToRegeneration > 5) &&
+		// (storedSource.energy !== 0 || storedSource.ticksToRegeneration > 5) &&
 		// and storedSource needs to have openPositions or be adjacent to creep
 		(getOpenPositions(storedSource.pos.x, storedSource.pos.y, creep.room.name)
 			.length ||
@@ -76,13 +78,13 @@ export function isStoredEnergySourceViable(creep: Creep): boolean {
 }
 
 export function harvestEnergy(creep: Creep): void {
-	const storedSource = creep.memory.sourceId
+	let storedSource = creep.memory.sourceId
 		? Game.getObjectById(creep.memory.sourceId)
 		: null;
 
 	if (!storedSource || !isStoredEnergySourceViable(creep)) {
 		delete creep.memory.sourceId;
-		findEnergySource(creep);
+		storedSource = findEnergySource(creep);
 	}
 	if (storedSource) {
 		if (creep.pos.isNearTo(storedSource)) {

@@ -7,13 +7,12 @@ const Harvester = {
 			creep.memory.working = false;
 			creep.say('harvesting');
 		}
-		if (!creep.memory.working && creep.store.getFreeCapacity() === 0) {
+		if (!creep.memory.working && creep.store.getFreeCapacity() !== 0) {
 			creep.memory.working = true;
 			creep.say('working');
 		}
 
-		if (!creep.memory.working && !creep.store.getFreeCapacity()) {
-			creep.memory.working = true;
+		if (creep.memory.working) {
 			harvestEnergy(creep);
 		} else {
 			const targets = creep.room.find(FIND_STRUCTURES, {
@@ -33,9 +32,6 @@ const Harvester = {
 					});
 				}
 			} else if (storageExcessResources) {
-				// this code doesnt work WHY?
-				// Cannot read property 'storage' of undefined
-
 				const { name: roomName } = creep.room;
 				const storage = Game.rooms[roomName].storage;
 				if (storage) {
