@@ -80,14 +80,17 @@ export function harvestEnergy(creep: Creep): void {
 		? Game.getObjectById(creep.memory.sourceId)
 		: null;
 
-	if (storedSource && isStoredEnergySourceViable(creep)) {
-		if (creep.harvest(storedSource) === ERR_NOT_IN_RANGE) {
+	if (!storedSource || !isStoredEnergySourceViable(creep)) {
+		delete creep.memory.sourceId;
+		findEnergySource(creep);
+	}
+	if (storedSource) {
+		if (creep.pos.isNearTo(storedSource)) {
+			creep.harvest(storedSource);
+		} else {
 			creep.moveTo(storedSource, {
 				visualizePathStyle: { stroke: '#ffaa00' },
 			});
 		}
-	} else {
-		delete creep.memory.sourceId;
-		findEnergySource(creep);
 	}
 }
