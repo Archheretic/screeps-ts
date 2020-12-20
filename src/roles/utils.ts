@@ -55,7 +55,7 @@ export function getOpenPositions(
 	return freePositions;
 }
 
-export function harvestEnergy(creep: Creep): void {
+export function isStoredEnergySourceViable(creep: Creep): boolean {
 	const storedSource = creep.memory.sourceId
 		? Game.getObjectById(creep.memory.sourceId)
 		: null;
@@ -69,12 +69,25 @@ export function harvestEnergy(creep: Creep): void {
 			.length ||
 			creep.pos.isNearTo(storedSource))
 	) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+export function harvestEnergy(creep: Creep): void {
+	const storedSource = creep.memory.sourceId
+		? Game.getObjectById(creep.memory.sourceId)
+		: null;
+
+	if (storedSource && isStoredEnergySourceViable(creep)) {
 		if (creep.harvest(storedSource) === ERR_NOT_IN_RANGE) {
 			creep.moveTo(storedSource, {
 				visualizePathStyle: { stroke: '#ffaa00' },
 			});
 		}
 	} else {
+		delete creep.memory.sourceId;
 		findEnergySource(creep);
 	}
 }
