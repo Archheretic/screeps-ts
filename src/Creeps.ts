@@ -1,13 +1,13 @@
-import Harvester from './roles/Harvester';
 import Builder from './roles/Builder';
+import Harvester from './roles/Harvester';
 import Upgrader from './roles/Upgrader';
 
 const Creeps = {
-	workWork() {
+	workWork(): void {
 		const { creeps } = Game;
 		Object.keys(creeps).forEach(creepName => {
 			const creep = creeps[creepName];
-			switch(creep.memory.role) {
+			switch (creep.memory.role) {
 				case 'harvester': {
 					Harvester.work(creep);
 					break;
@@ -22,7 +22,7 @@ const Creeps = {
 				}
 			}
 		});
-	}
+	},
 };
 
 export default Creeps;

@@ -2,7 +2,7 @@
 import RoomSettings from './RoomSettings';
 
 const Spawner = {
-	spawnAll() {
+	spawnAll(): void {
 		const names = ['Randy', 'Cartman', 'Kyle', 'Kenny', 'Stan', 'Butters'];
 		const roomSpawnsMap = getRoomSpawnsMap();
 		const population = getPopulation();
@@ -11,23 +11,33 @@ const Spawner = {
 			const spawnsInRoom = roomSpawnsMap[roomName];
 			const popInRoom = population[roomName];
 			console.log('popInRoom:', JSON.stringify(popInRoom, null, 2));
-			Object.keys(spawnsInRoom).forEach((sp, index) => {
+			Object.keys(spawnsInRoom).forEach(sp => {
 				// find first unused name, if no name is available give random number as name
-				const name = !Memory.creeps ? names[0] : names.find(name => !!!Memory.creeps[name]) || Math.random().toString();//uuidv4();
+				const name = !Memory.creeps
+					? names[0]
+					: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
 				roomSettings.rolePriority.forEach(role => {
 					// if there are less creeps spawned in the room then what is ideal spawn a new creep.
 					if (popInRoom[role] < roomSettings.idealPopulation[role]) {
 						const roleSettings = roomSettings.roles[role];
-						Game.spawns[sp].spawnCreep(roleSettings.body, name, {memory: {role, roomOrigin: roomName, spawnOrigin: sp}});
+						Game.spawns[sp].spawnCreep(roleSettings.body, name, {
+							memory: { role, roomOrigin: roomName, spawnOrigin: sp },
+						});
 					}
-				})
-			})
-		})
-	}
+				});
+			});
+		});
+	},
+};
+
+interface RoomSpawnsMapType {
+	[roomName: string]: {
+		[spawnName: string]: StructureSpawn;
+	};
 }
 
-function getRoomSpawnsMap() {
-	const roomSpawnsMap: any = {};
+function getRoomSpawnsMap(): RoomSpawnsMapType {
+	const roomSpawnsMap: RoomSpawnsMapType = {};
 	Object.keys(Game.rooms).forEach(roomName => {
 		roomSpawnsMap[roomName] = {};
 		Object.keys(Game.spawns).forEach(spawnName => {
@@ -36,44 +46,43 @@ function getRoomSpawnsMap() {
 			if (roomName === spawnRoom) {
 				roomSpawnsMap[roomName] = {
 					...roomSpawnsMap[roomName],
-					[spawnName]: spawn
-				}
+					[spawnName]: spawn,
+				};
 			}
 		});
 	});
 	return roomSpawnsMap;
 }
 
-type PopulationMapType = {
+interface PopulationMapType {
 	[room: string]: {
 		[role: string]: number;
-	}
+	};
 }
 
-function getPopulation() {
+function getPopulation(): PopulationMapType {
 	let populationMap: PopulationMapType = createInitialRoomsPopStructure();
-	Object.entries(Game.creeps).forEach(entry => {
-		const [ creepName, creep ] = entry;
+	Object.values(Game.creeps).forEach(creep => {
 		const roomOrigin = creep.memory.roomOrigin;
 		populationMap = {
 			...populationMap,
 			[roomOrigin]: {
 				...populationMap[roomOrigin],
-				[creep.memory.role]:  populationMap[roomOrigin]?.[creep.memory.role] +1
+				[creep.memory.role]: populationMap[roomOrigin]?.[creep.memory.role] + 1,
 			},
-		}
-	})
+		};
+	});
 	return populationMap;
 }
 
-function createInitialRoomsPopStructure() {
+function createInitialRoomsPopStructure(): PopulationMapType {
 	let populationMap: PopulationMapType = {};
 	Object.keys(Game.rooms).forEach(roomName => {
 		populationMap = {
 			...populationMap,
 			[roomName]: {
 				...populationMap[roomName],
-			}
+			},
 		};
 
 		RoomSettings[roomName].rolePriority.forEach(roleName => {
@@ -81,11 +90,11 @@ function createInitialRoomsPopStructure() {
 				...populationMap,
 				[roomName]: {
 					...populationMap[roomName],
-					[roleName]:	populationMap[roomName][roleName] || 0
-				}
+					[roleName]: populationMap[roomName][roleName] || 0,
+				},
 			};
-		})
-	})
+		});
+	});
 	return populationMap;
 }
 
