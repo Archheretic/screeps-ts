@@ -1,3 +1,5 @@
+import { findEnergySource } from './utils';
+
 const Harvester = {
 	work(creep: Creep): void {
 		const storageExcessResources = false;
@@ -7,15 +9,16 @@ const Harvester = {
 		}
 		if (!creep.memory.working && creep.store.getFreeCapacity() === 0) {
 			creep.memory.working = true;
-			creep.say('workinging');
+			creep.say('working');
 		}
 
 		if (!creep.memory.working) {
 			// FIND_SOURCES is sources of resources?
 			// const sources = creep.room.find(FIND_SOURCES);
 			// const activeSource = sources[creep.memory.sourceIndex || 0];
-			const activeSource = creep.pos.findClosestByRange(FIND_SOURCES);
+			const activeSource = findEnergySource(creep);
 			if (activeSource) {
+				// Game.getObjectById(activeSource.id);
 				if (
 					activeSource.energy === 0 &&
 					activeSource.ticksToRegeneration > 5 &&

@@ -1,3 +1,5 @@
+import { findEnergySource } from './utils';
+
 const Upgrader = {
 	work(creep: Creep): void {
 		if (creep.memory.working && creep.store[RESOURCE_ENERGY] === 0) {
@@ -19,9 +21,13 @@ const Upgrader = {
 				});
 			}
 		} else {
-			const sources = creep.room.find(FIND_SOURCES);
-			if (creep.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(sources[0], { visualizePathStyle: { stroke: '#ffaa00' } });
+			const activeSource = findEnergySource(creep);
+			if (activeSource) {
+				if (creep.harvest(activeSource) === ERR_NOT_IN_RANGE) {
+					creep.moveTo(activeSource, {
+						visualizePathStyle: { stroke: '#ffaa00' },
+					});
+				}
 			}
 		}
 	},

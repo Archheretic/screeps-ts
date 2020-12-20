@@ -6,7 +6,7 @@ interface CreepMemory {
 	roomOrigin: string;
 	spawnOrigin: string;
 	working?: boolean;
-	sourceIndex?: number;
+	sourceId?: Id<Source>;
 }
 
 interface Memory {
