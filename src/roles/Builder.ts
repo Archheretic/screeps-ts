@@ -1,5 +1,6 @@
 import { findTargetAndBuild } from 'assignments/build';
 import { harvestEnergy } from 'assignments/harvestEnergy';
+import { transferEnergyToMyStructures } from 'assignments/transferEnergy';
 
 const Builder = {
 	work(creep: Creep): void {
@@ -16,8 +17,9 @@ const Builder = {
 			const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 			if (targets.length) {
 				findTargetAndBuild(creep, targets);
+			} else {
+				transferEnergyToMyStructures(creep);
 			}
-			// else return resources.
 		} else {
 			harvestEnergy(creep);
 		}
