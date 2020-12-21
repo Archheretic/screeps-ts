@@ -1,4 +1,4 @@
-import { findMyStructuresLackingEnergy } from 'roles/utils';
+import { findMyStructuresLackingEnergy } from 'creepUtils';
 
 interface Optional {
 	storeExcessResources?: boolean;

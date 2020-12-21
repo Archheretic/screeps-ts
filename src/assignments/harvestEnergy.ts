@@ -1,4 +1,4 @@
-import { findEnergySource, isStoredEnergySourceViable } from 'roles/utils';
+import { findEnergySource, isStoredEnergySourceViable } from 'creepUtils';
 
 export function harvestEnergy(creep: Creep): void {
 	let storedSource = creep.memory.sourceId
