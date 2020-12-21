@@ -1,4 +1,5 @@
-import { harvestEnergy } from './utils';
+import { findTargetAndBuild } from 'assignments/build';
+import { harvestEnergy } from 'assignments/harvestEnergy';
 
 const Builder = {
 	work(creep: Creep): void {
@@ -13,13 +14,8 @@ const Builder = {
 
 		if (creep.memory.working) {
 			const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-			// console.log('targets:', JSON.stringify(targets, null, 2));
 			if (targets.length) {
-				if (creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
-					creep.moveTo(targets[0], {
-						visualizePathStyle: { stroke: '#ffffff' },
-					});
-				}
+				findTargetAndBuild(creep, targets);
 			}
 			// else return resources.
 		} else {

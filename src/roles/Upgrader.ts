@@ -1,4 +1,5 @@
-import { harvestEnergy } from './utils';
+import { harvestEnergy } from 'assignments/harvestEnergy';
+import { transferEnergyToTarget } from 'assignments/transferEnergy';
 
 const Upgrader = {
 	work(creep: Creep): void {
@@ -12,13 +13,8 @@ const Upgrader = {
 		}
 
 		if (creep.memory.working) {
-			if (
-				creep.room.controller &&
-				creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE
-			) {
-				creep.moveTo(creep.room.controller, {
-					visualizePathStyle: { stroke: '#ffffff' },
-				});
+			if (creep.room.controller) {
+				transferEnergyToTarget(creep, creep.room.controller);
 			}
 		} else {
 			harvestEnergy(creep);

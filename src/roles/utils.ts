@@ -5,13 +5,9 @@ export function findEnergySource(creep: Creep): Source | null {
 	}
 
 	const sources = creep.room.find(FIND_SOURCES);
-	console.log(JSON.stringify(sources, null, 2));
-	console.log(' creep.room.name:', creep.room.name);
 	const source = sources.find(
 		s => getOpenPositions(s.pos.x, s.pos.y, creep.room.name).length > 0
 	);
-
-	console.log('findEnergySource source:', source);
 	if (source) {
 		creep.memory.sourceId = source.id;
 	}
@@ -77,22 +73,18 @@ export function isStoredEnergySourceViable(creep: Creep): boolean {
 	}
 }
 
-export function harvestEnergy(creep: Creep): void {
-	let storedSource = creep.memory.sourceId
-		? Game.getObjectById(creep.memory.sourceId)
-		: null;
-
-	if (!storedSource || !isStoredEnergySourceViable(creep)) {
-		delete creep.memory.sourceId;
-		storedSource = findEnergySource(creep);
-	}
-	if (storedSource) {
-		if (creep.pos.isNearTo(storedSource)) {
-			creep.harvest(storedSource);
-		} else {
-			creep.moveTo(storedSource, {
-				visualizePathStyle: { stroke: '#ffaa00' },
-			});
-		}
-	}
+export function findMyStructuresLackingEnergy(
+	creep: Creep
+): AnyOwnedStructure[] {
+	const targets = creep.room.find(FIND_MY_STRUCTURES, {
+		filter: structure => {
+			return (
+				(structure.structureType === STRUCTURE_EXTENSION ||
+					structure.structureType === STRUCTURE_SPAWN ||
+					structure.structureType === STRUCTURE_TOWER) &&
+				structure.energy < structure.energyCapacity
+			);
+		},
+	});
+	return targets;
 }
