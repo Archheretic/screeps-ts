@@ -3,7 +3,18 @@ import RoomSettings from './RoomSettings';
 
 const Spawner = {
 	spawnAll(): void {
-		const names = ['Randy', 'Cartman', 'Kyle', 'Kenny', 'Stan', 'Butters'];
+		const names = [
+			'Randy',
+			'Cartman',
+			'Kyle',
+			'Kenny',
+			'Stan',
+			'Butters',
+			'Token',
+			'Mr(s). Garrison',
+			'Mr. Mackey',
+			'Mr. Slave',
+		];
 		const roomSpawnsMap = getRoomSpawnsMap();
 		const population = getPopulation();
 		Object.keys(Game.rooms).forEach(roomName => {

@@ -15,7 +15,7 @@ const Harvester = {
 		if (creep.memory.working) {
 			harvestEnergy(creep);
 		} else {
-			const targets = creep.room.find(FIND_STRUCTURES, {
+			const targets = creep.room.find(FIND_MY_STRUCTURES, {
 				filter: structure => {
 					return (
 						(structure.structureType === STRUCTURE_EXTENSION ||

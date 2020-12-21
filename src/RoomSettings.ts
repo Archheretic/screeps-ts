@@ -21,13 +21,13 @@ const RoomSettings: RoomSettingsType = {
 	 * First room
 	 */
 	E32N56: {
-		idealPopulation: { harvester: 3, builder: 0, upgrader: 2 },
+		idealPopulation: { harvester: 3, builder: 2, upgrader: 2 },
 		roles: {
 			harvester: {
 				body: [WORK, WORK, CARRY, MOVE, MOVE],
 			},
 			builder: {
-				body: [WORK, CARRY, MOVE, MOVE],
+				body: [WORK, WORK, CARRY, MOVE, MOVE],
 			},
 			upgrader: {
 				body: [WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
