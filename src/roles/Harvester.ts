@@ -6,7 +6,7 @@ const Harvester = {
 		const storeExcessResources = false;
 		if (creep.memory.working && creep.store.getFreeCapacity() === 0) {
 			creep.memory.working = false;
-			creep.say('deposit');
+			creep.say('🏦 deposit');
 		}
 		if (!creep.memory.working && creep.store.getUsedCapacity() === 0) {
 			creep.memory.working = true;
