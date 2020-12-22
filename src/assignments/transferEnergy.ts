@@ -42,8 +42,10 @@ export function transferEnergyToTarget(
 	if (creep.pos.isNearTo(target)) {
 		creep.transfer(target, RESOURCE_ENERGY);
 	} else {
-		creep.moveTo(target, {
-			visualizePathStyle: { stroke: '#ffffff' },
-		});
+		if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+			creep.moveTo(target, {
+				visualizePathStyle: { stroke: '#ffffff' },
+			});
+		}
 	}
 }
