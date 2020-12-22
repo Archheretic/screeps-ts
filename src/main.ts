@@ -2,19 +2,17 @@ import { mapRoomsMemory, removeCreepFromRoomMemory } from './roomUtils';
 import Creeps from './Creeps';
 import { ErrorMapper } from 'utils/ErrorMapper';
 import Spawner from './Spawner';
-// import { roomDefense } from 'roomDefense';
-// import { roomDefense, secure } from 'roomDefense';
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
 	console.log(`Current game tick is ${Game.time}`);
-	// Automatically delete memory of missing creeps
-	// if (!Memory.lastMappedRoomsMemory) {
-	// mapRoomsMemory();
-	// }
+	if (!Memory.lastMappedRoomsMemory) {
+		mapRoomsMemory();
+	}
 	for (const name in Memory.creeps) {
 		if (!(name in Game.creeps)) {
+			// handle deletion of  missing creeps
 			handleDeleteCreep(name);
 		}
 	}

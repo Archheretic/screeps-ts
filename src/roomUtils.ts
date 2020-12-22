@@ -150,12 +150,12 @@ export function createRoomsPopulationMap(): RoomsPopulationMapType {
 	let popMap: RoomsPopulationMapType = {};
 	Object.values(Game.creeps).forEach(creep => {
 		const roomOrigin = creep.memory.roomOrigin;
-		const room = creep.memory.room;
-		popMap = {
+		const room = creep.memory.room || creep.memory.roomOrigin;
+		const temp: RoomsPopulationMapType = {
 			...popMap,
-			[roomOrigin]: {
-				...popMap[roomOrigin],
-				roomName: roomOrigin,
+			[room]: {
+				...popMap[room],
+				roomName: room,
 				roles: {
 					...popMap[room]?.roles,
 					[creep.memory.role]: popMap[room]?.roles?.[creep.memory.role]
@@ -164,42 +164,23 @@ export function createRoomsPopulationMap(): RoomsPopulationMapType {
 				},
 				spawned: {
 					...popMap[roomOrigin]?.spawned,
-					[creep.memory.role]: popMap[room]?.roles?.[creep.memory.role]
-						? popMap[room]?.roles?.[creep.memory.role] + 1
-						: 1,
+					roles: {
+						...popMap[roomOrigin]?.spawned.roles,
+						[creep.memory.role]: popMap[room]?.roles?.[creep.memory.role]
+							? popMap[room]?.roles?.[creep.memory.role] + 1
+							: 1,
+					},
 				},
 				creeps: {
-					...popMap[roomOrigin]?.creeps,
+					...popMap[room]?.creeps,
 					[creep.name]: {
-						...popMap[roomOrigin]?.creeps?.[creep.name],
+						...popMap[room]?.creeps?.[creep.name],
 						memory: creep.memory,
 					},
 				},
 			},
 		};
+		popMap = temp;
 	});
 	return popMap;
 }
-
-// export function createInitialRoomsPopStructure(): RoomPopulationMapType {
-// 	let popMap: RoomPopulationMapType = {};
-// 	Object.keys(Game.rooms).forEach(roomName => {
-// 		populationMap = {
-// 			...populationMap,
-// 			[roomName]: {
-// 				...populationMap[roomName],
-// 			},
-// 		};
-
-// 		RoomSettings[roomName].rolePriority.forEach(roleName => {
-// 			populationMap = {
-// 				...populationMap,
-// 				[roomName]: {
-// 					...populationMap[roomName],
-// 					[roleName]: populationMap[roomName][roleName] || 0,
-// 				},
-// 			};
-// 		});
-// 	});
-// 	return populationMap;
-// }

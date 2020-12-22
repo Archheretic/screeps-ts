@@ -26,12 +26,13 @@ const Spawner = {
 			const popInRoom = room.memory.spawned.roles;
 			Object.keys(spawnsInRoom).forEach(sp => {
 				// find first unused name, if no name is available give random number as name
-				const creepName = !Memory.creeps
-					? names[0]
-					: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
 				roomSettings.rolePriority.forEach(role => {
 					// if there are less creeps spawned in the room then what is ideal spawn a new creep.
 					if (popInRoom[role] < roomSettings.idealPopulation[role]) {
+						const creepName = !Memory.creeps
+							? names[0]
+							: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
+
 						const roleSettings = roomSettings.roles[role];
 						const creepMemory: CreepMemory = {
 							role,
