@@ -10,9 +10,9 @@ import Spawner from './Spawner';
 export const loop = ErrorMapper.wrapLoop(() => {
 	console.log(`Current game tick is ${Game.time}`);
 	// Automatically delete memory of missing creeps
-	if (!Memory.lastMappedRoomsMemory) {
-		mapRoomsMemory();
-	}
+	// if (!Memory.lastMappedRoomsMemory) {
+	// mapRoomsMemory();
+	// }
 	for (const name in Memory.creeps) {
 		if (!(name in Game.creeps)) {
 			handleDeleteCreep(name);
