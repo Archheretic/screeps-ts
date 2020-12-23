@@ -9,7 +9,7 @@ interface RoomSettingsType {
 		};
 		roles: {
 			[role: string]: {
-				body: BodyPartConstant[];
+				bodyRatio: BodyPartConstant[];
 			};
 		};
 		rolePriority: roles[];
@@ -21,16 +21,16 @@ const RoomSettings: RoomSettingsType = {
 	 * First room
 	 */
 	E32N56: {
-		idealPopulation: { harvester: 2, builder: 3, upgrader: 3 },
+		idealPopulation: { harvester: 3, builder: 2, upgrader: 1 },
 		roles: {
 			harvester: {
-				body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+				bodyRatio: [WORK, CARRY, MOVE],
 			},
 			builder: {
-				body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+				bodyRatio: [WORK, CARRY, MOVE],
 			},
 			upgrader: {
-				body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
+				bodyRatio: [WORK, CARRY, MOVE, MOVE],
 			},
 		},
 		rolePriority: ['harvester', 'builder', 'upgrader'],

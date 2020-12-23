@@ -45,7 +45,7 @@ const Spawner = {
 					};
 
 					const creepSpawnedStatus = Game.spawns[sp].spawnCreep(
-						roleSettings.body,
+						getBody(roleSettings.bodyRatio, room),
 						creepName,
 						{
 							memory: creepMemory,
@@ -60,5 +60,20 @@ const Spawner = {
 		});
 	},
 };
+
+function getBody(bodyPartRatio: BodyPartConstant[], room: Room) {
+	const energyCapacityAvailable = room.energyCapacityAvailable;
+	let ratioCost = 0;
+	bodyPartRatio.forEach(bp => {
+		ratioCost += BODYPART_COST[bp];
+	});
+
+	const maxSegments = Math.floor(energyCapacityAvailable / ratioCost);
+	const body: BodyPartConstant[] = [];
+	for (let i = 1; i <= maxSegments; i++) {
+		body.push(...bodyPartRatio);
+	}
+	return body;
+}
 
 export default Spawner;
