@@ -5,6 +5,10 @@ interface RoomSpawnsMapType {
 export function mapRoomsMemory(): void {
 	Memory.rooms = {};
 	const roomsPopulationMap = createRoomsPopulationMap();
+	console.log(
+		'roomsPopulationMap:',
+		JSON.stringify(roomsPopulationMap, null, 2)
+	);
 	Object.keys(Game.rooms).forEach(roomName => {
 		const roomPopulationMap = roomsPopulationMap[roomName];
 		const room = Game.rooms[roomName];
@@ -34,6 +38,14 @@ export function addSpawnedCreepToRoomMemory(
 	creepName: string
 ): void {
 	const room = Game.rooms[roomName];
+
+	const roles = {
+		...room.memory.roles,
+		[creepMemory.role]: room.memory.spawned.roles[creepMemory.role]
+			? room.memory.spawned.roles[creepMemory.role] + 1
+			: 1,
+	};
+
 	room.memory = {
 		...room.memory,
 		// spawns: {
@@ -49,14 +61,10 @@ export function addSpawnedCreepToRoomMemory(
 				memory: creepMemory,
 			},
 		},
+		roles,
 		spawned: {
 			...room.memory.spawned,
-			roles: {
-				...room.memory.spawned.roles,
-				[creepMemory.role]: room.memory.spawned.roles[creepMemory.role]
-					? room.memory.spawned.roles[creepMemory.role] + 1
-					: 1,
-			},
+			roles,
 		},
 	};
 }
@@ -152,6 +160,7 @@ interface RoomPopulationMapType {
 
 export function createRoomsPopulationMap(): RoomsPopulationMapType {
 	let popMap: RoomsPopulationMapType = {};
+	// only works if there is a any creeps.
 	Object.values(Game.creeps).forEach(creep => {
 		const roomOrigin = creep.memory.roomOrigin;
 		const room = creep.memory.room;
@@ -186,5 +195,23 @@ export function createRoomsPopulationMap(): RoomsPopulationMapType {
 		};
 		popMap = temp;
 	});
+	if (!Object.keys(Game.creeps).length) {
+		let temp1: RoomsPopulationMapType = {};
+		Object.values(Game.rooms).forEach(room => {
+			const temp2: RoomsPopulationMapType = {
+				...temp1,
+				[room.name]: {
+					roomName: room.name,
+					roles: {},
+					spawned: {
+						roles: {},
+					},
+					creeps: {},
+				},
+			};
+			temp1 = temp2;
+		});
+		popMap = temp1;
+	}
 	return popMap;
 }

@@ -2,6 +2,7 @@ import { mapRoomsMemory, removeCreepFromRoomMemory } from './roomUtils';
 import Creeps from './Creeps';
 import { ErrorMapper } from 'utils/ErrorMapper';
 import Spawner from './Spawner';
+import { secure } from 'roomDefense';
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -22,8 +23,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
 	// Object.values(Game.rooms).forEach(room=> {
 	// })
 
-	// secure();
-	Spawner.spawnAll();
+	Object.values(Game.rooms).forEach(room => {
+		secure(room);
+		Spawner.spawnAll(room);
+	});
+	// Change creep.workWork to take room as param? No cpu gain as of yet since a creep loop still needs to be ran.
+	// but perhaps we can use a specific room state to impact creep work?
 	Creeps.workWork();
 });
 
