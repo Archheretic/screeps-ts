@@ -1,6 +1,6 @@
 // import { uuidv4 } from './utils';
 // import { roomDefense } from 'roomDefense';
-import RoomSettings from './RoomSettings';
+import { RoomSettings, Settings } from './Settings';
 import { addSpawnedCreepToRoomMemory } from 'roomUtils';
 
 const Spawner = {
@@ -36,7 +36,9 @@ const Spawner = {
 						? names[0]
 						: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
 
-					const roleSettings = roomSettings.roles[role];
+					const bodyPartRatio =
+						roomSettings.roles?.[role]?.bodyPartRatio ||
+						Settings.roles[role].bodyPartRatio;
 					const creepMemory: CreepMemory = {
 						role,
 						roomOrigin: roomName,
@@ -45,7 +47,7 @@ const Spawner = {
 					};
 
 					const creepSpawnedStatus = Game.spawns[sp].spawnCreep(
-						getBody(roleSettings.bodyRatio, room),
+						getBody(bodyPartRatio, room),
 						creepName,
 						{
 							memory: creepMemory,
