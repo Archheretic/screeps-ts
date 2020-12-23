@@ -11,7 +11,7 @@ const Spawner = {
 			'Kyle',
 			'Kenny',
 			'Stan',
-			'Butters',
+			// 'Butters',
 			'Token',
 			'Mr(s). Garrison',
 			'Mr. Mackey',

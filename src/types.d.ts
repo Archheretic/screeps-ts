@@ -34,7 +34,7 @@ interface RoomMemory {
 			[role: string]: number;
 		};
 	};
-	roles?: {
+	roles: {
 		[role: string]: number;
 	};
 }

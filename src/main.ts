@@ -28,12 +28,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
 });
 
 function handleDeleteCreep(creepName: string): void {
-	const creep = Game.creeps[creepName];
-	console.log('creep', creep);
-	console.log(
-		'Memory.creeps[creepName]',
-		JSON.stringify(Memory.creeps[creepName], null, 2)
-	);
-	removeCreepFromRoomMemory(creep.room.name, creepName);
+	removeCreepFromRoomMemory(creepName);
 	delete Memory.creeps[creepName];
 }

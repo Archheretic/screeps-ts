@@ -85,14 +85,18 @@ export function addCreepToRoomMemory(
 	};
 }
 
-export function removeCreepFromRoomMemory(
-	roomName: string,
-	creepName: string
-): void {
-	const room = Game.rooms[roomName];
+export function removeCreepFromRoomMemory(creepName: string): void {
+	// console.log('roomName:', roomName);
+	const creepMemory = Memory.creeps[creepName];
+	const room = Game.rooms[creepMemory.room];
+	const roomOrigin = Game.rooms[creepMemory.roomOrigin];
+
+	// console.log('room:', room);
+	// this one needs to be from room
+	room.memory.roles[creepMemory.role]--;
+	// this one needs to be from roomOrigin
+	roomOrigin.memory.spawned.roles[creepMemory.role]--;
 	delete room.memory.creeps[creepName];
-	const creep = Game.creeps[creepName];
-	room.memory.spawned.roles[creep.memory.role]--;
 }
 
 interface RoomsSpawnsMapType {
@@ -150,7 +154,7 @@ export function createRoomsPopulationMap(): RoomsPopulationMapType {
 	let popMap: RoomsPopulationMapType = {};
 	Object.values(Game.creeps).forEach(creep => {
 		const roomOrigin = creep.memory.roomOrigin;
-		const room = creep.memory.room || creep.memory.roomOrigin;
+		const room = creep.memory.room;
 		const temp: RoomsPopulationMapType = {
 			...popMap,
 			[room]: {
