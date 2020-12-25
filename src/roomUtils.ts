@@ -13,6 +13,9 @@ export function mapRoomsMemory(): void {
 			roles: roomPopulationMap.roles,
 			spawned: roomPopulationMap.spawned,
 			creeps: roomPopulationMap.creeps,
+			sources: {
+				energy: identifyRoomEnergySources(room),
+			},
 		};
 	});
 	Memory.lastMappedRoomsMemory = Game.time;
@@ -200,4 +203,29 @@ export function createRoomsPopulationMap(): RoomsPopulationMapType {
 		popMap = temp1;
 	}
 	return popMap;
+}
+
+export function periodicRoomChecks(room: Room, roomIndex: number): void {
+	if ((Game.time + roomIndex) % 500 === 0) {
+		setRoomEnergySources(room);
+	}
+}
+
+interface SourceKeyValuePair {
+	[id: string]: Source;
+}
+
+function identifyRoomEnergySources(room: Room): SourceKeyValuePair {
+	const sources = room.find(FIND_SOURCES);
+	const energiSources: SourceKeyValuePair = sources
+		.filter(source => source.energy)
+		.reduce((map: SourceKeyValuePair, source) => {
+			map[source.id] = source;
+			return map;
+		}, {});
+	return energiSources;
+}
+
+function setRoomEnergySources(room: Room): void {
+	room.memory.sources.energy = identifyRoomEnergySources(room);
 }

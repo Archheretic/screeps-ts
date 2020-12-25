@@ -1,4 +1,8 @@
-import { mapRoomsMemory, removeCreepFromRoomMemory } from './roomUtils';
+import {
+	mapRoomsMemory,
+	periodicRoomChecks,
+	removeCreepFromRoomMemory,
+} from './roomUtils';
 import Creeps from './Creeps';
 import { ErrorMapper } from 'utils/ErrorMapper';
 import Spawner from './Spawner';
@@ -18,8 +22,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
 		}
 	}
 
-	Object.values(Game.rooms).forEach(room => {
+	Object.values(Game.rooms).forEach((room, roomIndex) => {
 		secure(room);
+		periodicRoomChecks(room, roomIndex);
 		Spawner.spawnAll(room);
 	});
 	// Change creep.workWork to take room as param? No cpu gain as of yet since a creep loop still needs to be ran.

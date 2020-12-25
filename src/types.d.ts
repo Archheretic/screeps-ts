@@ -37,6 +37,11 @@ interface RoomMemory {
 	roles: {
 		[role: string]: number;
 	};
+	sources: {
+		energy: {
+			[sourceId: string]: Source;
+		};
+	};
 }
 
 // `global` extension samples
