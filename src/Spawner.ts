@@ -24,6 +24,12 @@ const Spawner = {
 		const spawnsInRoom = room.memory.spawns;
 		const popInRoom = room.memory.spawned.roles;
 		Object.keys(spawnsInRoom).forEach(sp => {
+			const spawn = Game.spawns[sp];
+			if (spawn.spawning) {
+				// if spawn is already spawning it does not have the capacity to spawn multiple in parallel
+				// so we stop here to save spawn
+				return;
+			}
 			// find first unused name, if no name is available give random number as name
 			roomSettings.rolePriority.forEach(role => {
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
@@ -46,7 +52,7 @@ const Spawner = {
 						room: roomName,
 					};
 
-					const creepSpawnedStatus = Game.spawns[sp].spawnCreep(
+					const creepSpawnedStatus = spawn.spawnCreep(
 						getBody(bodyPartRatio, room),
 						creepName,
 						{
@@ -64,6 +70,41 @@ const Spawner = {
 };
 
 function getBody(bodyPartRatio: BodyPartConstant[], room: Room) {
+	if (room.energyAvailable < 300 && !Object.keys(room.memory.creeps).length) {
+		return getMinimalBody(bodyPartRatio);
+	}
+	return getIdealBody(bodyPartRatio, room);
+}
+
+interface BodyPartKeyValuePair {
+	[bodyPart: string]: BodyPartConstant;
+}
+
+function getMinimalBody(bodyPartRatio: BodyPartConstant[]): BodyPartConstant[] {
+	const basicBodyParts: BodyPartKeyValuePair = {
+		[WORK]: WORK,
+		[CARRY]: CARRY,
+		[MOVE]: MOVE,
+	};
+
+	let isBodyOnlyOfBasicParts = true;
+	for (const bp of bodyPartRatio) {
+		if (basicBodyParts[bp]) {
+			isBodyOnlyOfBasicParts = false;
+			break;
+		}
+	}
+	if (isBodyOnlyOfBasicParts) {
+		return [WORK, CARRY, MOVE];
+	} else {
+		return bodyPartRatio;
+	}
+}
+
+function getIdealBody(
+	bodyPartRatio: BodyPartConstant[],
+	room: Room
+): BodyPartConstant[] {
 	const energyCapacityAvailable = room.energyCapacityAvailable;
 	let ratioCost = 0;
 	bodyPartRatio.forEach(bp => {

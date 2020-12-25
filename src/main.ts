@@ -18,11 +18,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
 		}
 	}
 
-	// {"name":"E32N56","energyAvailable":500,"energyCapacityAvailable":500,"visual":{"roomName":"E32N56"}}
-	// console.log(JSON.stringify(Object.values(Game.rooms)[0]));
-	// Object.values(Game.rooms).forEach(room=> {
-	// })
-
 	Object.values(Game.rooms).forEach(room => {
 		secure(room);
 		Spawner.spawnAll(room);

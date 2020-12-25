@@ -30,7 +30,7 @@ export const RoomSettings: RoomSettingsType = {
 	 * First room
 	 */
 	E32N56: {
-		idealPopulation: { harvester: 3, builder: 2, upgrader: 1 },
+		idealPopulation: { harvester: 2, builder: 4, upgrader: 1 },
 		// overrides global setings body part ratio settings
 		roles: {
 			harvester: {

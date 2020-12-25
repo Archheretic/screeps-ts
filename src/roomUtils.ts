@@ -5,10 +5,6 @@ interface RoomSpawnsMapType {
 export function mapRoomsMemory(): void {
 	Memory.rooms = {};
 	const roomsPopulationMap = createRoomsPopulationMap();
-	console.log(
-		'roomsPopulationMap:',
-		JSON.stringify(roomsPopulationMap, null, 2)
-	);
 	Object.keys(Game.rooms).forEach(roomName => {
 		const roomPopulationMap = roomsPopulationMap[roomName];
 		const room = Game.rooms[roomName];
@@ -21,16 +17,6 @@ export function mapRoomsMemory(): void {
 	});
 	Memory.lastMappedRoomsMemory = Game.time;
 }
-
-// export function initiateRoomMemory(roomName: string): void {
-// 	const room = Game.rooms[roomName];
-// 	const
-// 	room.memory = {
-// 		spawns: createRoomSpawnsMap(roomName),
-// 		creeps: {
-
-// 		}
-// }
 
 export function addSpawnedCreepToRoomMemory(
 	roomName: string,
