@@ -6,24 +6,13 @@ import {
 	RoomSettingsType,
 	RoomsSettings,
 	Settings,
+	names,
 } from './Settings';
 import { addBlockerToFlag } from 'flagUtils';
 import { addSpawnedCreepToRoomMemory } from 'roomUtils';
 
 const Spawner = {
 	spawnAll(room: Room): void {
-		const names = [
-			'Randy',
-			'Cartman',
-			'Kyle',
-			'Kenny',
-			'Stan',
-			'Butters',
-			'Token',
-			'Mr(s). Garrison',
-			'Mr. Mackey',
-			'Mr. Slave',
-		];
 		const roomName = room.name;
 		// const roomSpawnsMap = getRoomSpawnsMap();
 		// const population = getPopulation();
