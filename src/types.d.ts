@@ -9,6 +9,7 @@ interface CreepMemory {
 	sourceId?: Id<Source>;
 	room: string;
 	targetRoom: string;
+	targetFlag?: string;
 }
 
 interface Memory {
@@ -25,6 +26,12 @@ interface Memory {
 
 interface RolesNumbersType {
 	[role: string]: number;
+}
+
+interface FlagMemory {
+	blocker?: {
+		lastSpawn: number;
+	};
 }
 
 interface RoomMemory {

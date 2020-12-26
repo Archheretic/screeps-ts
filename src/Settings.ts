@@ -1,6 +1,13 @@
-// const ROLES_TYPES = ['harvester', 'builder', 'upgrader', 'miner'];
+// const ROLES_TYPES = ['harvester', 'builder', 'upgrader', 'miner', 'blocker'];
 // typeof ROLES_TYPES[number];
-export type RolesType = 'harvester' | 'builder' | 'upgrader' | 'miner';
+export type FlagType = 'block';
+
+export type RolesType =
+	| 'harvester'
+	| 'builder'
+	| 'upgrader'
+	| 'miner'
+	| 'blocker';
 
 interface SettingsType {
 	rooms: RoomsSettingsType;
@@ -34,9 +41,12 @@ export const RoomsSettings: RoomsSettingsType = {
 	 * First room
 	 */
 	E32N56: {
-		idealPopulation: { harvester: 0, builder: 4, upgrader: 1 },
+		idealPopulation: { blocker: 4, harvester: 0, builder: 4, upgrader: 1 },
 		// overrides global setings body part ratio settings
 		roles: {
+			blocker: {
+				bodyPartRatio: [WORK],
+			},
 			miner: {
 				bodyPartRatio: [WORK, CARRY, MOVE],
 			},
@@ -50,7 +60,7 @@ export const RoomsSettings: RoomsSettingsType = {
 				bodyPartRatio: [WORK, CARRY, MOVE, MOVE],
 			},
 		},
-		rolePriority: ['miner', 'harvester', 'builder', 'upgrader'],
+		rolePriority: ['miner', 'harvester', 'builder', 'upgrader', 'blocker'],
 	},
 };
 

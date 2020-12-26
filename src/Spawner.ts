@@ -7,6 +7,7 @@ import {
 	RoomsSettings,
 	Settings,
 } from './Settings';
+import { addBlockerToFlag } from 'flagUtils';
 import { addSpawnedCreepToRoomMemory } from 'roomUtils';
 
 const Spawner = {
@@ -59,7 +60,7 @@ const Spawner = {
 					appendMemoryBasedOnRole(creepMemory);
 
 					const creepSpawnedStatus = spawn.spawnCreep(
-						getBody(bodyPartRatio, room),
+						getBody(bodyPartRatio, room, role),
 						creepName,
 						{
 							memory: creepMemory,
@@ -68,6 +69,9 @@ const Spawner = {
 					if (creepSpawnedStatus === OK) {
 						// append to room memory
 						addSpawnedCreepToRoomMemory(creepMemory, creepName);
+						if (creepMemory.role === 'blocker') {
+							addBlockerToFlag(creepMemory);
+						}
 					}
 				}
 			});
@@ -90,6 +94,20 @@ function shouldRoleBeSpawned(
 		}
 		return false;
 	}
+
+	if (role === 'blocker') {
+		const flags = room.find(FIND_FLAGS);
+		for (const flag of flags) {
+			if (flag.name.includes('block')) {
+				const lastSpawn = flag.memory.blocker?.lastSpawn;
+				if (!lastSpawn || Game.time - lastSpawn >= CREEP_LIFE_TIME) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	// other roles
 	return (
 		popInRoom[role] < roomSettings.idealPopulation[role] ||
@@ -111,7 +129,14 @@ function appendMemoryBasedOnRole(creepMemory: CreepMemory): void {
 	}
 }
 
-function getBody(bodyPartRatio: BodyPartConstant[], room: Room) {
+function getBody(
+	bodyPartRatio: BodyPartConstant[],
+	room: Room,
+	role: RolesType
+) {
+	if (role === 'blocker') {
+		return [MOVE];
+	}
 	if (room.energyAvailable < 300 && !Object.keys(room.memory.creeps).length) {
 		return getMinimalBody(bodyPartRatio);
 	}

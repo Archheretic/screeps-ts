@@ -1,3 +1,4 @@
+import Blocker from './roles/Blocker';
 import Builder from './roles/Builder';
 import Harvester from './roles/Harvester';
 import Upgrader from './roles/Upgrader';
@@ -22,6 +23,10 @@ const Creeps = {
 				}
 				case 'upgrader': {
 					Upgrader.work(creep);
+					break;
+				}
+				case 'blocker': {
+					Blocker.work(creep);
 					break;
 				}
 			}
