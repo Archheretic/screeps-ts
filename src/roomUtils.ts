@@ -22,18 +22,19 @@ export function mapRoomsMemory(): void {
 }
 
 export function addSpawnedCreepToRoomMemory(
-	roomName: string,
 	creepMemory: CreepMemory,
 	creepName: string
 ): void {
-	const room = Game.rooms[roomName];
-
+	const { roomOrigin, targetRoom: targetRoomName } = creepMemory;
+	const room = Game.rooms[roomOrigin];
 	const roles = {
 		...room.memory.roles,
 		[creepMemory.role]: room.memory.spawned.roles[creepMemory.role]
 			? room.memory.spawned.roles[creepMemory.role] + 1
 			: 1,
 	};
+
+	// creepMemory.sourceId;
 
 	room.memory = {
 		...room.memory,
@@ -56,6 +57,27 @@ export function addSpawnedCreepToRoomMemory(
 			roles,
 		},
 	};
+
+	const sourceId = creepMemory.sourceId;
+	// if creep has a source id we need to update last spawned on the energy
+	// sourceId in the target room
+	// TODO: Find out if sourceId energy is specific enough to not make this bad code?
+	if (sourceId) {
+		const targetRoom = Game.rooms[targetRoomName];
+		targetRoom.memory = {
+			...targetRoom.memory,
+			sources: {
+				...targetRoom.memory.sources,
+				energy: {
+					...targetRoom.memory.sources.energy,
+					[sourceId]: {
+						...targetRoom.memory.sources.energy[sourceId],
+						lastSpawn: Game.time,
+					},
+				},
+			},
+		};
+	}
 }
 
 export function addCreepToRoomMemory(
@@ -211,16 +233,22 @@ export function periodicRoomChecks(room: Room, roomIndex: number): void {
 	}
 }
 
-interface SourceKeyValuePair {
-	[id: string]: Source;
+interface RoomSourceMemoryType {
+	[id: string]: {
+		lastSpawn: number;
+		sourceId: Id<Source>;
+	};
 }
 
-function identifyRoomEnergySources(room: Room): SourceKeyValuePair {
+function identifyRoomEnergySources(room: Room): RoomSourceMemoryType {
 	const sources = room.find(FIND_SOURCES);
-	const energiSources: SourceKeyValuePair = sources
+	const energiSources: RoomSourceMemoryType = sources
 		.filter(source => source.energy)
-		.reduce((map: SourceKeyValuePair, source) => {
-			map[source.id] = source;
+		.reduce((map: RoomSourceMemoryType, source) => {
+			map[source.id] = {
+				lastSpawn: 0,
+				sourceId: source.id,
+			};
 			return map;
 		}, {});
 	return energiSources;

@@ -8,6 +8,7 @@ interface CreepMemory {
 	working?: boolean;
 	sourceId?: Id<Source>;
 	room: string;
+	targetRoom: string;
 }
 
 interface Memory {
@@ -22,6 +23,10 @@ interface Memory {
 	log: any;
 }
 
+interface RolesNumbersType {
+	[role: string]: number;
+}
+
 interface RoomMemory {
 	spawns: RoomSpawnsMapType;
 	creeps: {
@@ -30,16 +35,16 @@ interface RoomMemory {
 		};
 	};
 	spawned: {
-		roles: {
-			[role: string]: number;
-		};
+		roles: RolesNumbersType;
 	};
-	roles: {
-		[role: string]: number;
-	};
+	roles: RolesNumbersType;
 	sources: {
 		energy: {
-			[sourceId: string]: Source;
+			[sourceId: string]: {
+				sourceId: Id<Source>;
+				// Game.getObjectById(sourceId);
+				lastSpawn: number;
+			};
 		};
 	};
 }

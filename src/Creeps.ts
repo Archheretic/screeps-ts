@@ -12,6 +12,10 @@ const Creeps = {
 					Harvester.work(creep);
 					break;
 				}
+				case 'miner': {
+					Harvester.work(creep);
+					break;
+				}
 				case 'builder': {
 					Builder.work(creep);
 					break;

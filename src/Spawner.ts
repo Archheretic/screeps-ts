@@ -1,6 +1,12 @@
 // import { uuidv4 } from './utils';
 // import { roomDefense } from 'roomDefense';
-import { RoomSettings, Settings } from './Settings';
+import {
+	RolesNumbersType,
+	RolesType,
+	RoomSettingsType,
+	RoomsSettings,
+	Settings,
+} from './Settings';
 import { addSpawnedCreepToRoomMemory } from 'roomUtils';
 
 const Spawner = {
@@ -11,7 +17,7 @@ const Spawner = {
 			'Kyle',
 			'Kenny',
 			'Stan',
-			// 'Butters',
+			'Butters',
 			'Token',
 			'Mr(s). Garrison',
 			'Mr. Mackey',
@@ -20,7 +26,7 @@ const Spawner = {
 		const roomName = room.name;
 		// const roomSpawnsMap = getRoomSpawnsMap();
 		// const population = getPopulation();
-		const roomSettings = RoomSettings[roomName];
+		const roomSettings = RoomsSettings[roomName];
 		const spawnsInRoom = room.memory.spawns;
 		const popInRoom = room.memory.spawned.roles;
 		Object.keys(spawnsInRoom).forEach(sp => {
@@ -33,11 +39,7 @@ const Spawner = {
 			// find first unused name, if no name is available give random number as name
 			roomSettings.rolePriority.forEach(role => {
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
-				if (
-					popInRoom[role] < roomSettings.idealPopulation[role] ||
-					(popInRoom[role] === undefined &&
-						roomSettings.idealPopulation[role] > 0)
-				) {
+				if (shouldRoleBeSpawned(role, popInRoom, roomSettings, room)) {
 					const creepName = !Memory.creeps
 						? names[0]
 						: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
@@ -45,12 +47,16 @@ const Spawner = {
 					const bodyPartRatio =
 						roomSettings.roles?.[role]?.bodyPartRatio ||
 						Settings.roles[role].bodyPartRatio;
+
 					const creepMemory: CreepMemory = {
 						role,
 						roomOrigin: roomName,
 						spawnOrigin: sp,
 						room: roomName,
+						targetRoom: roomName,
 					};
+
+					appendMemoryBasedOnRole(creepMemory);
 
 					const creepSpawnedStatus = spawn.spawnCreep(
 						getBody(bodyPartRatio, room),
@@ -61,13 +67,49 @@ const Spawner = {
 					);
 					if (creepSpawnedStatus === OK) {
 						// append to room memory
-						addSpawnedCreepToRoomMemory(roomName, creepMemory, creepName);
+						addSpawnedCreepToRoomMemory(creepMemory, creepName);
 					}
 				}
 			});
 		});
 	},
 };
+
+function shouldRoleBeSpawned(
+	role: RolesType,
+	popInRoom: RolesNumbersType,
+	roomSettings: RoomSettingsType,
+	room: Room
+): boolean {
+	if (role === 'miner') {
+		const energy = room.memory.sources.energy;
+		for (const source of Object.values(energy)) {
+			if (Game.time - source.lastSpawn >= CREEP_LIFE_TIME) {
+				return true;
+			}
+		}
+		return false;
+	}
+	// other roles
+	return (
+		popInRoom[role] < roomSettings.idealPopulation[role] ||
+		(popInRoom[role] === undefined && roomSettings.idealPopulation[role] > 0)
+	);
+}
+
+function appendMemoryBasedOnRole(creepMemory: CreepMemory): void {
+	const { role, targetRoom } = creepMemory;
+	if (role === 'miner') {
+		const room = Game.rooms[targetRoom];
+		const energy = room.memory.sources.energy;
+		for (const source of Object.values(energy)) {
+			if (Game.time - source.lastSpawn >= CREEP_LIFE_TIME) {
+				creepMemory.sourceId = source.sourceId;
+				break;
+			}
+		}
+	}
+}
 
 function getBody(bodyPartRatio: BodyPartConstant[], room: Room) {
 	if (room.energyAvailable < 300 && !Object.keys(room.memory.creeps).length) {
@@ -86,7 +128,6 @@ function getMinimalBody(bodyPartRatio: BodyPartConstant[]): BodyPartConstant[] {
 		[CARRY]: CARRY,
 		[MOVE]: MOVE,
 	};
-
 	let isBodyOnlyOfBasicParts = true;
 	for (const bp of bodyPartRatio) {
 		if (basicBodyParts[bp]) {
@@ -110,7 +151,6 @@ function getIdealBody(
 	bodyPartRatio.forEach(bp => {
 		ratioCost += BODYPART_COST[bp];
 	});
-
 	const maxSegments = Math.floor(energyCapacityAvailable / ratioCost);
 	const body: BodyPartConstant[] = [];
 	for (let i = 1; i <= maxSegments; i++) {
