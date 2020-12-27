@@ -27,9 +27,17 @@ const Spawner = {
 				return;
 			}
 			// find first unused name, if no name is available give random number as name
-			roomSettings.rolePriority.forEach(role => {
+			roomSettings.rolePriority.forEach((role, rolePriorityIndex) => {
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
-				if (shouldRoleBeSpawned(role, popInRoom, roomSettings, room)) {
+				if (
+					shouldRoleBeSpawned(
+						role,
+						popInRoom,
+						roomSettings,
+						room,
+						rolePriorityIndex
+					)
+				) {
 					const creepName = !Memory.creeps
 						? names[0]
 						: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
@@ -72,8 +80,20 @@ function shouldRoleBeSpawned(
 	role: RolesType,
 	popInRoom: RolesNumbersType,
 	roomSettings: RoomSettingsType,
-	room: Room
+	room: Room,
+	rolePriorityIndex: number
 ): boolean {
+	if (
+		!hasMoreImportantRolesBeenFilled(
+			role,
+			popInRoom,
+			roomSettings,
+			rolePriorityIndex
+		)
+	) {
+		return false;
+	}
+
 	if (role === 'miner') {
 		const energy = room.memory.sources.energy;
 		for (const source of Object.values(energy)) {
@@ -102,6 +122,26 @@ function shouldRoleBeSpawned(
 		popInRoom[role] < roomSettings.idealPopulation[role] ||
 		(popInRoom[role] === undefined && roomSettings.idealPopulation[role] > 0)
 	);
+}
+
+function hasMoreImportantRolesBeenFilled(
+	role: RolesType,
+	popInRoom: RolesNumbersType,
+	roomSettings: RoomSettingsType,
+	rolePriorityIndex: number
+): boolean {
+	if (rolePriorityIndex === 0) {
+		return true;
+	}
+	for (let i = 0; i < rolePriorityIndex; i++) {
+		if (
+			roomSettings.idealPopulation[roomSettings.rolePriority[i]] <
+			popInRoom[role]
+		) {
+			return false;
+		}
+	}
+	return true;
 }
 
 function appendMemoryBasedOnRole(creepMemory: CreepMemory): void {

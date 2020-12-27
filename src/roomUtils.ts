@@ -112,9 +112,22 @@ export function removeCreepFromRoomMemory(creepName: string): void {
 
 	// console.log('room:', room);
 	// this one needs to be from room
-	room.memory.roles[creepMemory.role]--;
+	if (!room || !roomOrigin) {
+		return;
+	}
+
+	if (!room.memory) {
+		mapRoomsMemory();
+	}
+	// if creep role is not 0
+	if (room.memory.roles[creepMemory.role]) {
+		room.memory.roles[creepMemory.role]--;
+	}
 	// this one needs to be from roomOrigin
-	roomOrigin.memory.spawned.roles[creepMemory.role]--;
+	// if creep spawned role is not 0
+	if (roomOrigin.memory.spawned.roles[creepMemory.role]) {
+		roomOrigin.memory.spawned.roles[creepMemory.role]--;
+	}
 	delete room.memory.creeps[creepName];
 }
 
