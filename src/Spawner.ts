@@ -28,10 +28,11 @@ const Spawner = {
 			}
 			// find first unused name, if no name is available give random number as name
 			const { rolePriority } = roomSettings;
-			for (const role of rolePriority)
+			for (const role of rolePriority) {
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
 				if (shouldRoleBeSpawned(role, popInRoom, roomSettings, room)) {
-					console.log('room', roomName);
+					console.log('Room', roomName);
+					console.log('Trying to spawn role', role);
 					const creepName = !Memory.creeps
 						? names[0]
 						: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
