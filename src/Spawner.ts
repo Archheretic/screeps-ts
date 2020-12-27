@@ -28,22 +28,9 @@ const Spawner = {
 			}
 			// find first unused name, if no name is available give random number as name
 			const { rolePriority } = roomSettings;
-			for (
-				let rolePriorityIndex = 0;
-				rolePriorityIndex < rolePriority.length;
-				rolePriorityIndex++
-			) {
-				const role = rolePriority[rolePriorityIndex];
+			for (const role of rolePriority)
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
-				if (
-					shouldRoleBeSpawned(
-						role,
-						popInRoom,
-						roomSettings,
-						room,
-						rolePriorityIndex
-					)
-				) {
+				if (shouldRoleBeSpawned(role, popInRoom, roomSettings, room)) {
 					console.log('room', roomName);
 					const creepName = !Memory.creeps
 						? names[0]
@@ -76,8 +63,8 @@ const Spawner = {
 						if (creepMemory.role === 'blocker') {
 							addBlockerToFlag(creepMemory);
 						}
-						break;
 					}
+					break;
 				}
 			}
 		});
@@ -88,20 +75,8 @@ function shouldRoleBeSpawned(
 	role: RolesType,
 	popInRoom: RolesNumbersType,
 	roomSettings: RoomSettingsType,
-	room: Room,
-	rolePriorityIndex: number
+	room: Room
 ): boolean {
-	if (
-		!hasMoreImportantRolesBeenFilled(
-			role,
-			popInRoom,
-			roomSettings,
-			rolePriorityIndex
-		)
-	) {
-		return false;
-	}
-
 	if (role === 'miner') {
 		const energy = room.memory.sources.energy;
 		for (const source of Object.values(energy)) {
@@ -132,26 +107,6 @@ function shouldRoleBeSpawned(
 	);
 }
 
-function hasMoreImportantRolesBeenFilled(
-	role: RolesType,
-	popInRoom: RolesNumbersType,
-	roomSettings: RoomSettingsType,
-	rolePriorityIndex: number
-): boolean {
-	if (rolePriorityIndex === 0) {
-		return true;
-	}
-	for (let i = 0; i < rolePriorityIndex; i++) {
-		if (
-			roomSettings.idealPopulation[roomSettings.rolePriority[i]] <
-			popInRoom[role]
-		) {
-			return false;
-		}
-	}
-	return true;
-}
-
 function appendMemoryBasedOnRole(creepMemory: CreepMemory): void {
 	const { role, targetRoom } = creepMemory;
 	if (role === 'miner') {
@@ -175,6 +130,8 @@ function getBody(
 		return [MOVE];
 	}
 
+	// TODO: This logic needs to be expanded, ideal body may be too expensive even if there are creeps present
+	// the creeps might also not be harvesting energy...
 	if (room.energyAvailable < 300 && !Object.keys(room.memory.creeps).length) {
 		return getMinimalBody(bodyPartRatio);
 	}
