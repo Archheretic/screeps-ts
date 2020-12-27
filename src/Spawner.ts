@@ -27,7 +27,13 @@ const Spawner = {
 				return;
 			}
 			// find first unused name, if no name is available give random number as name
-			roomSettings.rolePriority.forEach((role, rolePriorityIndex) => {
+			const { rolePriority } = roomSettings;
+			for (
+				let rolePriorityIndex = 0;
+				rolePriorityIndex < rolePriority.length;
+				rolePriorityIndex++
+			) {
+				const role = rolePriority[rolePriorityIndex];
 				// if there are less creeps spawned in the room then what is ideal spawn a new creep.
 				if (
 					shouldRoleBeSpawned(
@@ -38,6 +44,7 @@ const Spawner = {
 						rolePriorityIndex
 					)
 				) {
+					console.log('room', roomName);
 					const creepName = !Memory.creeps
 						? names[0]
 						: names.find(n => !Memory.creeps[n]) || Math.random().toString(); // uuidv4();
@@ -55,9 +62,9 @@ const Spawner = {
 					};
 
 					appendMemoryBasedOnRole(creepMemory);
-
+					const body = getBody(bodyPartRatio, room, role);
 					const creepSpawnedStatus = spawn.spawnCreep(
-						getBody(bodyPartRatio, room, role),
+						getBody(body, room, role),
 						creepName,
 						{
 							memory: creepMemory,
@@ -69,9 +76,10 @@ const Spawner = {
 						if (creepMemory.role === 'blocker') {
 							addBlockerToFlag(creepMemory);
 						}
+						break;
 					}
 				}
-			});
+			}
 		});
 	},
 };
@@ -166,6 +174,7 @@ function getBody(
 	if (role === 'blocker') {
 		return [MOVE];
 	}
+
 	if (room.energyAvailable < 300 && !Object.keys(room.memory.creeps).length) {
 		return getMinimalBody(bodyPartRatio);
 	}
